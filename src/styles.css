@@ -1,0 +1,210 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #f4efe8;
+  --color-sheet: #fbf8f3;
+  --color-ink: #1b1512;
+  --color-muted: #5c5148;
+  --color-faint: #8a7d72;
+  --color-line: #e3d9ce;
+  --color-roast: #3a271f;
+  --color-clay: #7a4e3a;
+  --color-moss: #2f5d45;
+  --font-sans: "Outfit", "Avenir Next", "Segoe UI", sans-serif;
+  --font-display: "Fraunces", "Iowan Old Style", Palatino, Georgia, serif;
+  --radius-control: 12px;
+  --radius-chip: 16px;
+  --radius-card: 24px;
+  --radius-panel: 28px;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-roast) 18%, white);
+  }
+}
+
+@layer components {
+  .frame-wide {
+    aspect-ratio: 3 / 2;
+  }
+
+  .shell-grid {
+    display: grid;
+    min-height: 100dvh;
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.25rem + 2.4vw, 3.5rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .display-sm {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1.15rem + 1vw, 2rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .field {
+    height: 2.75rem;
+    width: 100%;
+    border-radius: var(--radius-control);
+    border: 1px solid var(--color-line);
+    background: var(--color-sheet);
+    padding-inline: 0.75rem;
+    color: var(--color-ink);
+    font-size: 1rem;
+  }
+
+  textarea.field {
+    height: auto;
+    min-height: 5.5rem;
+    padding-block: 0.75rem;
+    resize: vertical;
+  }
+
+  .field::placeholder {
+    color: var(--color-faint);
+  }
+
+  .field-icon {
+    padding-left: 2.75rem;
+  }
+
+  .focus-ring:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--color-roast) 50%, white);
+    outline-offset: 2px;
+  }
+
+  .press {
+    transition-property: transform, background-color, color, border-color, opacity;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .press:active {
+    transform: scale(0.98);
+  }
+
+  .scroll-none {
+    scrollbar-width: none;
+  }
+
+  .scroll-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dock {
+    padding-bottom: calc(0.35rem + env(safe-area-inset-bottom));
+  }
+
+  .toast-dock {
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 35;
+    bottom: calc(5.5rem + env(safe-area-inset-bottom));
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+    padding-inline: 1rem;
+  }
+
+  .atlas-panel {
+    max-height: min(92dvh, 760px);
+  }
+
+  .atlas-overlay[data-state="open"] {
+    animation: atlas-fade 250ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .atlas-panel[data-state="open"] {
+    animation: atlas-in 250ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+@keyframes atlas-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes atlas-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (min-width: 768px) {
+  .shell-grid {
+    grid-template-columns: 240px minmax(0, 1fr);
+  }
+
+  .toast-dock {
+    bottom: 2rem;
+  }
+
+  .atlas-panel[data-state="open"] {
+    animation-name: atlas-in-center;
+  }
+}
+
+@keyframes atlas-in-center {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 8px)) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .press,
+  .press:active,
+  .atlas-overlay,
+  .atlas-panel {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
+
+  @media (min-width: 768px) {
+    .atlas-panel {
+      transform: translate(-50%, -50%);
+    }
+  }
+}
